@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- edit information area-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:textSize="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="课程名称:"/>
+            <EditText
+                android:id="@+id/edit_courseName"
+                android:hint="课程名称不包含空格"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:nextFocusForward="@+id/edit_courseId"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
+
+            <TextView
+                android:textSize="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="课程编号:"/>
+            <EditText
+                android:id="@+id/edit_courseId"
+                android:hint="必填字段"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:nextFocusForward="@+id/edit_courseTeacher"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
+
+            <TextView
+                android:textSize="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="任课老师:"/>
+            <EditText
+                android:id="@+id/edit_courseTeacher"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:nextFocusForward="@+id/edit_courseLocation"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
+
+            <TextView
+                android:textSize="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="上课地点:"/>
+            <EditText
+                android:id="@+id/edit_courseLocation"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <!--bottom button area-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/confirm_action"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="确认"/>
+        <Button
+            android:id="@+id/cancel_action"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="取消"/>
+    </LinearLayout>
+</LinearLayout>

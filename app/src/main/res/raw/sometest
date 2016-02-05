@@ -1,0 +1,152 @@
+//读取默认配置函数
+protected void readDefaultInfo(){
+        //build a list_map
+        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+        //input stream
+        InputStream inputStream = getResources().openRawResource(R.raw.defaultuserinfo);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        StringBuilder stringBuilder = new StringBuilder();
+        String stringLine;
+        try {
+            while((stringLine = bufferedReader.readLine()) != null){
+                stringBuilder.append(stringLine);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            //build a json array
+            JSONArray jsonArray = new JSONArray(stringBuilder.toString());
+            int i = 0;
+            //translate json data to map<k, v> and put them into ListView data
+            for(i=0; i<jsonArray.length(); i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("id", jsonObject.getString("id"));
+                map.put("name", jsonObject.getString("name"));
+                if(jsonObject.getString("sex").equals("m")) {
+                    map.put("icon", R.drawable.user_male);
+                }else{
+                    map.put("icon", R.drawable.user_female);
+                }
+                data.add(map);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            e.printStackTrace();
+        }
+        SimpleAdapter simpleAdapter = new SimpleAdapter(StudentListActivity.this, data,
+                R.layout.listview_layout,
+                new String[]{"id", "name", "icon"},
+                new int[]{R.id.stuID, R.id.stuName, R.id.profile});
+        myListView.setAdapter(simpleAdapter);
+
+    }
+//test activity
+package com.example.gavin.stuinfomanager;
+
+import android.content.ContentValues;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+
+import com.example.gavin.stuinfomanager.Activity.AddStudentActivity;
+import com.example.gavin.stuinfomanager.Service.StudentsService;
+import com.example.gavin.stuinfomanager.Classes.Students;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class TestActivity extends AppCompatActivity {
+
+    private List<Students> studentsList;
+    private ListView myListView;
+    private Button add;
+    private Button delete;
+    private Button edit;
+    private Button query;
+    private int location;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_test);
+        init();
+        setMyListView();
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TestActivity.this, AddStudentActivity.class);
+                startActivity(intent);
+            }
+        });
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StudentsService.deleteStudent(TestActivity.this, studentsList.get(0));
+            }
+        });
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("stu_name", "first");
+                StudentsService.updateStudent(TestActivity.this, studentsList.get(0), contentValues);
+            }
+        });
+
+
+    }
+
+    protected void setMyListView(){
+        studentsList = StudentsService.getStudentList(TestActivity.this);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Map<String, Object> map = new HashMap<String, Object>();
+        int num= 0;
+        num = studentsList.size();
+        Toast.makeText(TestActivity.this, "当前共"+Integer.toString(num)+"条记录", Toast.LENGTH_SHORT).show();
+
+        int i;
+        for(i=0; i<num; i++){
+            map = new HashMap<String, Object>();
+            Students cu = studentsList.get(i);
+            Log.d("current student name", cu.getName());
+            map.put("id", cu.getId());
+            map.put("name", cu.getName());
+            if(cu.getSex().equals("f"))
+                map.put("icon",R.drawable.user_female);
+            else
+                map.put("icon",R.drawable.user_male);
+            Log.d("myservice", map.toString());
+            list.add(map);
+        }
+        SimpleAdapter simpleAdapter = new SimpleAdapter(TestActivity.this, list,
+                R.layout.listview_layout,
+                new String[]{"id", "name", "icon"},
+                new int[]{R.id.stuID, R.id.stuName, R.id.profile});
+        myListView.setAdapter(simpleAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setMyListView();
+    }
+
+    protected void init(){
+        add = (Button) findViewById(R.id.add_action);
+        delete = (Button) findViewById(R.id.delete_action);
+        edit = (Button) findViewById(R.id.edit_action);
+        query = (Button) findViewById(R.id.query_action);
+        myListView = (ListView) findViewById(R.id.myListView);
+    }
+}
+
